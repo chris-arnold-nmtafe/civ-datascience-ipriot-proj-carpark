@@ -15,7 +15,11 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         self._available_spaces = self.max_spaces
         self._temperature = 0
         self.cars = {}  
-    
+        self.display = None
+
+    def set_display(self, display):
+        self.display = display
+
     @property
     def available_spaces(self):
         return self._available_spaces
@@ -35,6 +39,9 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
             print(f'Car entered: {license_plate} at {self.cars[license_plate]}')
         else:
             print(f'Car entry failed: {license_plate}')
+        if self.display:
+            self.display.update_display()
+
         
 
     def outgoing_car(self, license_plate):
@@ -44,11 +51,17 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
             print(f'Car exited: {license_plate}, entered at {entry_time}')
         else:
             print(f'Car not found: {license_plate}')
+        if self.display:
+            self.display.update_display()
+
         
 
     def temperature_reading(self, reading):
         self._temperature = reading
         print(f'Temperature updated: {reading}°C')
+        if self.display:
+            self.display.update_display()
+
       
 
 

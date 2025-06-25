@@ -182,6 +182,8 @@ if __name__ == '__main__':
     #TODO: Set the display to use your data source
     display.data_provider = manager
 
+    manager.set_display(display)
+
     detector=CarDetectorWindow(root)
     #TODO: Attach your event listener
     detector.add_listener(manager)
