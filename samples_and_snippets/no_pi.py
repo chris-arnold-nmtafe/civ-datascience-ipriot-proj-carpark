@@ -97,7 +97,7 @@ class CarParkDisplay:
     def update_display(self):
         field_values = dict(zip(CarParkDisplay.fields, [
             f'{self._provider.available_spaces:03d}',
-            f'{self._provider.temperature:02d}℃',
+            f'{self._provider.temperature:.1f}℃',
             time.strftime("%H:%M:%S",self._provider.current_time)
         ]))
         self.window.update(field_values)
@@ -174,14 +174,16 @@ if __name__ == '__main__':
     root = tk.Tk()
 
     #TODO: This is my dodgy mockup. Replace it with a good one!
-    mock=mocks.MockCarparkManager()
+    from carpark_manager import CarparkManager
+    manager = CarparkManager()
+
 
     display=CarParkDisplay(root)
     #TODO: Set the display to use your data source
-    display.data_provider=mock
+    display.data_provider = manager
 
     detector=CarDetectorWindow(root)
     #TODO: Attach your event listener
-    detector.add_listener(mock)
+    detector.add_listener(manager)
 
     root.mainloop()
