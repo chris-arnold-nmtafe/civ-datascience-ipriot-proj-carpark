@@ -1,16 +1,24 @@
+import json
 import time
 from interfaces import CarparkSensorListener, CarparkDataProvider
 
 class CarparkManager(CarparkSensorListener, CarparkDataProvider):
 
-    def __init__(self):
-        self._max_spaces = 10
-        self._cars = {}  
-        self._temperature = 0.0 
+    def __init__(self, config_file='samples_and_snippets/config.json'):
+        with open(config_file, 'r') as file:
+            data = json.load(file)
+        
+        carpark = data['CarParks'][0]
+        self.name = carpark['name']
+        self.max_spaces = carpark['total-spaces']
+
+        self._available_spaces = self.max_spaces
+        self._temperature = 0
+        self.cars = {}  
     
     @property
     def available_spaces(self):
-        return self._max_spaces - len(self._cars)
+        return self._available_spaces
 
     @property
     def temperature(self):
@@ -21,16 +29,18 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         return time.localtime()
 
     def incoming_car(self, license_plate):
-        if self.available_spaces > 0 and license_plate not in self._cars:
-            self._cars[license_plate] = time.strftime("%H:%M:%S")
-            print(f'Car entered: {license_plate} at {self._cars[license_plate]}')
+        if self._available_spaces > 0 and license_plate not in self.cars:
+            self.cars[license_plate] = time.strftime("%H:%M:%S")
+            self._available_spaces -= 1
+            print(f'Car entered: {license_plate} at {self.cars[license_plate]}')
         else:
             print(f'Car entry failed: {license_plate}')
         
 
     def outgoing_car(self, license_plate):
-        if license_plate in self._cars:
-            entry_time = self._cars.pop(license_plate)
+        if license_plate in self.cars:
+            entry_time = self.cars.pop(license_plate)
+            self._available_spaces += 1
             print(f'Car exited: {license_plate}, entered at {entry_time}')
         else:
             print(f'Car not found: {license_plate}')
