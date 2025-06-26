@@ -1,5 +1,6 @@
 import json
 import time
+import os
 from interfaces import CarparkSensorListener, CarparkDataProvider
 
 class CarparkManager(CarparkSensorListener, CarparkDataProvider):
@@ -16,6 +17,9 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         self._temperature = 0
         self.cars = {}  
         self.display = None
+
+        if not os.path.exists('logs'):
+            os.makedirs('logs')
 
     def set_display(self, display):
         self.display = display
@@ -37,8 +41,10 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
             self.cars[license_plate] = time.strftime("%H:%M:%S")
             self._available_spaces -= 1
             print(f'Car entered: {license_plate} at {self.cars[license_plate]}')
+            self.log_event(f'IN  - {license_plate} at {self.cars[license_plate]}')
         else:
             print(f'Car entry failed: {license_plate}')
+            self.log_event(f'IN FAILED - {license_plate}')
         if self.display:
             self.display.update_display()
 
@@ -49,8 +55,10 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
             entry_time = self.cars.pop(license_plate)
             self._available_spaces += 1
             print(f'Car exited: {license_plate}, entered at {entry_time}')
+            self.log_event(f'OUT - {license_plate} entered at {entry_time}')
         else:
             print(f'Car not found: {license_plate}')
+            self.log_event(f'OUT FAILED - {license_plate}')
         if self.display:
             self.display.update_display()
 
@@ -59,8 +67,14 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
     def temperature_reading(self, reading):
         self._temperature = reading
         print(f'Temperature updated: {reading}°C')
+        self.log_event(f'Temperature set to {reading}°C')
         if self.display:
             self.display.update_display()
+
+    def log_event(self, message):
+        with open('logs/car_log.txt', 'a') as f:
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+            f.write(f'{timestamp} - {message}\n')
 
       
 
