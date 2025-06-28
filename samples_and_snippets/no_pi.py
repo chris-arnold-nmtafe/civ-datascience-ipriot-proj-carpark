@@ -10,7 +10,9 @@ import time
 import tkinter as tk
 from typing import Iterable
 #TODO: replace this module with yours
-import mocks
+from mocks import parking_database 
+
+
 
 # ------------------------------------------------------------------------------------#
 # You don't need to understand how to implement this class.                           #
@@ -94,11 +96,20 @@ class CarParkDisplay:
         if isinstance(provider,CarparkDataProvider):
             self._provider=provider
 
+##old display code
+    # def update_display(self):
+    #     field_values = dict(zip(CarParkDisplay.fields, [
+    #         f'{self._provider.available_spaces:03d}',
+    #         f'{self._provider.temperature:02d}℃',
+    #         time.strftime("%H:%M:%S",self._provider.current_time)
+    #     ]))
+    #     self.window.update(field_values)
+## new display code time fix
     def update_display(self):
         field_values = dict(zip(CarParkDisplay.fields, [
-            f'{self._provider.available_spaces:03d}',
-            f'{self._provider.temperature:02d}℃',
-            time.strftime("%H:%M:%S",self._provider.current_time)
+        f'{self._provider.available_spaces:03d}',  
+        f'{self._provider.temperature:.1f}℃',     
+        time.strftime("%H:%M:%S", self._provider.current_time)
         ]))
         self.window.update(field_values)
 
@@ -107,11 +118,13 @@ class CarParkDisplay:
             # TODO: This timer is pretty janky! Can you provide some kind of signal from your code
             # to update the display?
             time.sleep(1)
+
+            
             # When you get an update, refresh the display.
-            if self._provider is not None:
+            if self._provider is not True:
                 self.update_display()
 
-
+    
 class CarDetectorWindow:
     """Provides a couple of simple buttons that can be used to represent a sensor detecting a car. This is a skeleton only."""
 
@@ -126,16 +139,18 @@ class CarDetectorWindow:
             self.root, text='Outgoing Car 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.outgoing_car)
         self.btn_outgoing_car.grid(padx=10, pady=5,row=1,columnspan=2)
         self.listeners=list()
-        self.temp_label=tk.Label(
-            self.root, text="Temperature", font=('Arial', 20)
-        )
-        self.temp_label.grid(padx=10, pady=5,column=0,row=2)
-        self.temp_var=tk.StringVar()
-        self.temp_var.trace_add("write",lambda x,y,v: self.temperature_changed(float(self.temp_var.get())))
-        self.temp_box=tk.Entry(
-            self.root,font=('Arial', 20),textvariable=self.temp_var
-        )
-        self.temp_box.grid(padx=10, pady=5,column=1,row=2)
+
+        ##temperature input removal
+        # self.temp_label=tk.Label(
+        #     self.root, text="Temperature", font=('Arial', 20)
+        # )
+        # self.temp_label.grid(padx=10, pady=5,column=0,row=2)
+        # self.temp_var=tk.StringVar()
+        # self.temp_var.trace_add("write",lambda x,y,v: self.temperature_changed(float(self.temp_var.get())))
+        # self.temp_box=tk.Entry(
+        #     self.root,font=('Arial', 20),textvariable=self.temp_var
+        # )
+        # self.temp_box.grid(padx=10, pady=5,column=1,row=2)
 
         self.plate_label=tk.Label(
             self.root, text="License Plate", font=('Arial', 20)
@@ -146,7 +161,12 @@ class CarDetectorWindow:
             self.root,font=('Arial', 20),textvariable=self.plate_var
         )
         self.plate_box.grid(padx=10, pady=5,column=1,row=3)
-    
+
+        #NOTE:Reset Parking button
+        self.btn_reset = tk.Button(
+            self.root, text='Reset Parking', font=('Arial', 30), command=self.reset_parking)
+        self.btn_reset.grid(padx=5, pady=5, row=2, columns=1)
+        
     @property
     def current_license(self):
         return self.plate_var.get()
@@ -168,20 +188,27 @@ class CarDetectorWindow:
     def temperature_changed(self,temp):
         for listener in self.listeners:
             listener.temperature_reading(temp)
-
+    
+    def reset_parking(self):
+        """Trigger reset on all listeners"""
+        for listener in self.listeners:
+            if hasattr(listener, 'reset_parking'):
+                listener.reset_parking()
 
 if __name__ == '__main__':
     root = tk.Tk()
 
     #TODO: This is my dodgy mockup. Replace it with a good one!
-    mock=mocks.MockCarparkManager()
+    #NOTE: done
+    
+    database=parking_database()
 
     display=CarParkDisplay(root)
     #TODO: Set the display to use your data source
-    display.data_provider=mock
+    display.data_provider=database
 
     detector=CarDetectorWindow(root)
     #TODO: Attach your event listener
-    detector.add_listener(mock)
+    detector.add_listener(database)
 
     root.mainloop()
