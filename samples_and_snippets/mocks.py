@@ -5,34 +5,45 @@ import math
 import string
 import random
 
+
 class parking_database(CarparkSensorListener, CarparkDataProvider):
     initial_empty_space = 10
 
     def __init__(self, update_display_callback=None):
         self._available_spaces = self.initial_empty_space
-        self._temperature = 29.0  # default temperature
+        # for temperature 
+        self._temperature = 27.0  
+        ##NOTE: uncomment for self changing feature
+        # self._step=0
+        # self._trig_variable = random.uniform(0, 2*math.pi)
+        #
         self._cars_in_lot = set()
         self._update_display = update_display_callback
         
-        # Update display if callback exists
         if self._update_display:
             self._update_display() 
 # ------------------------------------------------------------------------------------#
-# random temperature between 27-31 celcius.
+# Math function to make temperature flactuate between 27-31 celcius.
 # ------------------------------------------------------------------------------------#
     @property
-    def temperature(self):
-        time_based_value = math.sin(time.time() * 0.5)  
-        self._temperature = 29 + 2 * time_based_value  
-        return round(self._temperature, 1)
+    ##NOTE:equation for self changing temperature. Uncomment for self changing feature
+    # def temperature(self):              
+    #         self._step += 1
+    #         if self._step % 50 < 25:
+    #             base_change = 0.16
+    #         else:
+    #             base_change = -0.16
+    #         maf_function_one = math.sin(self._step/5 + self._trig_variable) * 0.08              #equation derived from chat GPT
+    #         self._temperature = min(max(27, self._temperature + base_change + maf_function_one), 31)
+    #         return round(self._temperature, 1)
+    #NOTE:manual temperature input
+    def temperature(self) -> float:
+        return self._temperature
+    
 
     @property
     def available_spaces(self) -> int:
         return self.initial_empty_space - len(self._cars_in_lot)
-
-    # @property
-    # def temperature(self) -> float:
-    #     return self._temperature
 
     @property
     def current_time(self):
@@ -44,12 +55,16 @@ class parking_database(CarparkSensorListener, CarparkDataProvider):
         if self._update_display:
             self._update_display()
 
+# ------------------------------------------------------------------------------------#
+# reset                          #
+# ------------------------------------------------------------------------------------#         
+
     def reset_parking(self):
         """reset-remove all cars."""
         print("empty spaces resetted to the initial capacity")
-        self._cars_in_lot.clear()  # Remove all license plates
+        self._cars_in_lot.clear()  
         if self._update_display:
-            self._update_display()  # Refresh the display
+            self._update_display()  
 
 # ------------------------------------------------------------------------------------#
 # incomming                          #
@@ -62,24 +77,21 @@ class parking_database(CarparkSensorListener, CarparkDataProvider):
             numbers = ''.join(random.choices(string.digits, k=5))
             license_plate = f"{letters}-{numbers}"
         
-        # Check for duplicate plates first
+        # duplicate check
         if license_plate in self._cars_in_lot:
             print(f"[WARNING] {license_plate}: has already parked")
             return
         
-        # Check if parking is full (000 spaces)
         if self.available_spaces <= 0:
             print(f"[WARNING] {license_plate}: Parking is lot FULL")
             return
         
-        # If all checks pass, add the car
         print(f"INCOMING vehicle. Licencse plate: {license_plate}")
+        
         self._cars_in_lot.add(license_plate)
-        
-        # Check if parking just became full (was 001, now 000)
-        if self.available_spaces == 0:  # After adding the car, spaces drop to 0
+        if self.available_spaces == 0:  
             print(f"[WARNING] Parking lot is now FULL (000 spaces)")
-        
+
         if self._update_display:
             self._update_display()
 

@@ -119,9 +119,8 @@ class CarParkDisplay:
             # to update the display?
             time.sleep(1)
 
-            
             # When you get an update, refresh the display.
-            if self._provider is not True:
+            if self._provider:
                 self.update_display()
 
     
@@ -140,18 +139,19 @@ class CarDetectorWindow:
         self.btn_outgoing_car.grid(padx=10, pady=5,row=1,columnspan=2)
         self.listeners=list()
 
-        ##temperature input removal
-        # self.temp_label=tk.Label(
-        #     self.root, text="Temperature", font=('Arial', 20)
-        # )
-        # self.temp_label.grid(padx=10, pady=5,column=0,row=2)
-        # self.temp_var=tk.StringVar()
-        # self.temp_var.trace_add("write",lambda x,y,v: self.temperature_changed(float(self.temp_var.get())))
-        # self.temp_box=tk.Entry(
-        #     self.root,font=('Arial', 20),textvariable=self.temp_var
-        # )
-        # self.temp_box.grid(padx=10, pady=5,column=1,row=2)
+        ##temperature input
+        self.temp_label=tk.Label(
+            self.root, text="Temperature", font=('Arial', 20)
+        )
+        self.temp_label.grid(padx=10, pady=5,column=0,row=2)
+        self.temp_var=tk.StringVar()
+        self.temp_var.trace_add("write",lambda x,y,v: self.temperature_changed(float(self.temp_var.get())))
+        self.temp_box=tk.Entry(
+            self.root,font=('Arial', 20),textvariable=self.temp_var
+        )
+        self.temp_box.grid(padx=10, pady=5,column=1,row=2)
 
+        #plate
         self.plate_label=tk.Label(
             self.root, text="License Plate", font=('Arial', 20)
         )
@@ -164,8 +164,8 @@ class CarDetectorWindow:
 
         #NOTE:Reset Parking button
         self.btn_reset = tk.Button(
-            self.root, text='Reset Parking', font=('Arial', 30), command=self.reset_parking)
-        self.btn_reset.grid(padx=5, pady=5, row=2, columns=1)
+            self.root, text='Reset Parking', font=('Arial', 20), command=self.reset_parking)
+        self.btn_reset.grid(padx=5, pady=5, row=4, column=2)
         
     @property
     def current_license(self):
@@ -202,10 +202,12 @@ if __name__ == '__main__':
     #NOTE: done
     
     database=parking_database()
+    
 
     display=CarParkDisplay(root)
     #TODO: Set the display to use your data source
     display.data_provider=database
+    database._update_display = display.update_display
 
     detector=CarDetectorWindow(root)
     #TODO: Attach your event listener
