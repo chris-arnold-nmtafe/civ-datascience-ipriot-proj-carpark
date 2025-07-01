@@ -24,7 +24,7 @@ class CarPark(mqtt_device.MqttDevice):
 
     @property
     def temperature(self):
-        self._temperature
+        return self._temperature
     
     @temperature.setter
     def temperature(self, value):
@@ -49,35 +49,37 @@ class CarPark(mqtt_device.MqttDevice):
     def on_car_entry(self):
         self.total_cars += 1
         self._publish_event()
-
-
+        print(f"🚗 entered → total cars: {self.total_cars}")
 
     def on_car_exit(self):
-        self.total_cars -= 1
+        if self.total_cars > 0:
+            self.total_cars -= 1
         self._publish_event()
+        print(f"🚗 exited → total cars: {self.total_cars}")
+
 
     def on_message(self, client, userdata, msg: MQTTMessage):
         payload = msg.payload.decode()
-        # TODO: Extract temperature from payload
-        # self.temperature = ... # Extracted value
-        if 'exit' in payload:
+    
+        try:
+            action, temp_str = payload.split(",")
+            self.temperature = int(temp_str.strip())
+        except ValueError:
+            print("⚠️ Error: Could not parse temperature from payload:", payload)
+            return
+
+        if 'exit' in action.lower():
             self.on_car_exit()
         else:
             self.on_car_entry()
 
 
+
+from config_parser import parse_config
+
 if __name__ == '__main__':
-    config = {'name': "raf-park",
-              'total-spaces': 130,
-              'total-cars': 0,
-              'location': 'L306',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              'topic-qualifier': 'entry',
-              'is_stuff': False
-              }
-    # TODO: Read config from file
+    config = parse_config("config.toml")
+    print("✔ config loaded:", config)  # ←この行を追加
     car_park = CarPark(config)
     print("Carpark initialized")
-    print("Carpark initialized")
+
