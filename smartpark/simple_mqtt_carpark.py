@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import json
 import mqtt_device
 import paho.mqtt.client as paho
 from paho.mqtt.client import MQTTMessage
@@ -62,8 +62,9 @@ class CarPark(mqtt_device.MqttDevice):
         payload = msg.payload.decode()
     
         try:
-            action, temp_str = payload.split(",")
-            self.temperature = int(temp_str.strip())
+            data = json.loads(payload)
+            action = data.get("action", "").lower()
+            self.temperature = int(data.get("temperature", 0))
         except ValueError:
             print("⚠️ Error: Could not parse temperature from payload:", payload)
             return
@@ -79,7 +80,7 @@ from config_parser import parse_config
 
 if __name__ == '__main__':
     config = parse_config("config.toml")
-    print("✔ config loaded:", config)  # ←この行を追加
+    print("✔ config loaded:", config)  
     car_park = CarPark(config)
     print("Carpark initialized")
 

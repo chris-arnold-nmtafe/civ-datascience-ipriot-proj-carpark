@@ -1,27 +1,27 @@
 | Requirement Category     | Task Description                                                                                                       | Checkbox |
 |--------------------------|------------------------------------------------------------------------------------------------------------------------|----------|
-| General Requirements     | Code follows PEP 8 style guide                                                                                        | [ ]      |
-|                          | Code is documented with comments                                                                                       | [ ]      |
-|                          | Unit tests are created                                                                                                 | [ ]      |
+| General Requirements     | Code follows PEP 8 style guide                                                                                        | [x ]      |
+|                          | Code is documented with comments                                                                                       | [x ]      |
+|                          | Unit tests are created                                                                                                 | [x ]      |
 | MQTT Configuration       | **CarPark Class:**                                                                                                     |          |
-|                          | Subscribes to MQTT topics                                                                                              | [ ]      |
-|                          | Publishes MQTT messages                                                                                                | [ ]      |
-|                          | Can parse messages from sensor                                                                          | [ ]      |
-|                          | Sends MQTT message that includes available bays, temperature                                                                         | [ ]      |
+|                          | Subscribes to MQTT topics                                                                                              | x[ ]      |
+|                          | Publishes MQTT messages                                                                                                | [x ]      |
+|                          | Can parse messages from sensor                                                                          | [x ]      |
+|                          | Sends MQTT message that includes available bays, temperature                                                                         | x[ ]      |
 |                          | **Sensor Class:**                                                                                                      |          |
-|                          | Publishes MQTT messages                                                                                                | [ ]      |
-|                          | Sends MQTT messages that include temperature, time, and entry/exit                                                                                        | [ ]      |
+|                          | Publishes MQTT messages                                                                                                | [x ]      |
+|                          | Sends MQTT messages that include temperature, time, and entry/exit                                                                                        | [x ]      |
 |                          | **Display Class:**                                                                                                     |          |
-|                          | Subscribes to MQTT topics                                                                                              | [ ]      |
-|                          | Parses MQTT messages from car park                                                                                        | [ ]      |
+|                          | Subscribes to MQTT topics                                                                                              | [x ]      |
+|                          | Parses MQTT messages from car park                                                                                        | [x ]      |
 | Configuration File       | **CarPark Class:**                                                                                                     |          |
-| Management               | Reads initial configuration from a file                                                                                | [ ]      |
+| Management               | Reads initial configuration from a file                                                                                | [x ]      |
 |                          | Writes available bays to a configuration class                                                                         | [ ]      |
 |                          | **Sensor Class:**                                                                                                      |          |
-|                          | Reads initial configuration from a file                                                                                | [ ]      |
+|                          | Reads initial configuration from a file                                                                                | [x ]      |
 |                          | **Display Class:**                                                                                                     |          |
-|                          | Reads initial configuration from a file                                                                                | [ ]      |
-| Testing Requirements     | At least one test case for CarPark Class                                                                               | [ ]      |
+|                          | Reads initial configuration from a file                                                                                | [x ]      |
+| Testing Requirements     | At least one test case for CarPark Class                                                                               | [x ]      |
 |                          | At least one test case for Sensor or Display Class                                                                     | [ ]      |
 | Additional Requirements  | Invent your own protocol for transmitting information; JSON is recommended                                             | [ ]      |
 | Git Requirements         | Forked the original project repository                                                                                 | [ ]      |

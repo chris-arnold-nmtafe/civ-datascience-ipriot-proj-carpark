@@ -1,7 +1,7 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
 import random
-
+import json
 import mqtt_device
 from config_parser import parse_config
 
@@ -14,6 +14,10 @@ class Sensor(mqtt_device.MqttDevice):
 
     def on_detection(self, message):
         """Triggered when a detection occurs"""
+        message = json.dumps({
+            "action": "entered",
+            "temperature": self.temperature
+        })
         self.client.publish('sensor', message)
 
     def start_sensing(self):
