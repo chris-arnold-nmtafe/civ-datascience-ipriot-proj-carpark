@@ -14,11 +14,11 @@ class CarparkSensorListener(abc.ABC):
     Your code should respond accordingly. See an example below! 
     '''
     @abc.abstractmethod
-    def incoming_car(self):
+    def incoming_car(self,license_plate):
         '''Signals that a car has parked in an available bay'''
         pass
     @abc.abstractmethod
-    def outgoing_car(self):
+    def outgoing_car(self,license_plate):
         '''Signals that a car has left an occupied bay'''
         pass
     @abc.abstractmethod

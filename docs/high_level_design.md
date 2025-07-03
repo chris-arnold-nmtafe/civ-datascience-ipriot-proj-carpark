@@ -17,7 +17,7 @@ Attributes:
 - location: The parking lot's location.
 - total_spaces: The total number of parking spaces.
 - available_spaces: The number of available parking spaces.
-- mqtt_client: The MQTT client to send and receive messages.
+- mqtt_client (optional): The MQTT client to send and receive messages.
 
 Methods: 
 - `__init__(self, config)`: Initialize the ParkingLot object with the given configuration.
@@ -52,19 +52,19 @@ Methods:
 ```mermaid
 
 classDiagram
-    ParkingLot --> Display : updates (via MQTT)
+    ParkingLot --> Display
     class ParkingLot {
         +location: str
         +total_spaces: int
         +available_spaces: int
-        +mqtt_client: MQTTClient
         +enter(): None
         +exit(): None
         +publish_update(): None
     }
     class Sensor {
-        +sense_hat: SenseHAT
-        +read_temperature(): float
+        +car_in(license_plate: str)
+        +car_out(license_plate: str)
+        +temperature(): float
     }
     class Display {
         +sense_hat: SenseHAT
@@ -72,7 +72,7 @@ classDiagram
     }
 ```
 
-## Technical Guidance
+## Technical Guidance (if using MQTT or SenseHat)
 
 ### MQTT
 
@@ -220,32 +220,9 @@ class Sensor:
 
 ## Test Cases
 
-For the unittest module, you can create test cases that cover the parsing of the configuration file and the logic of the parking lot. Here are some example test cases:
+For the unittest module, you can create test cases that cover the logic of the parking lot. Here are some example test cases:
 
-1. Test that the configuration file is parsed correctly:
-
-```python
-
-import unittest
-import tomli
-from parking_lot import parse_config
-
-class TestConfigParsing(unittest.TestCase):
-    def test_parse_config(self):
-        config_string = '''
-        [parking_lot]
-        location = "Moondalup City Square Parking"
-        total_spaces = 192
-        broker_host = "localhost"
-        broker_port = 1883
-        '''
-        config = tomli.loads(config_string)
-        parking_lot = parse_config(config)
-        self.assertEqual(parking_lot.location, "Moondalup City Square Parking")
-        self.assertEqual(parking_lot.total_spaces, 192)
-```
-
-2. Test that the available spaces do not go below zero:
+1. Test that the available spaces do not go below zero:
 
 ```python
 
@@ -271,10 +248,6 @@ class TestParkingLot(unittest.TestCase):
 Replace the SenseHAT with a Tkinter-based interface for simulating joystick events and displaying the parking lot information. 
 
 > **Lecturer's note**: code `no_pi.py` has already been provided that implements a more advanced version of this for you.
-
-### Dependencies
-
-For this alternative, there is no need for a Sensor class, as the temperature and other sensor data will be simulated.
 
 ### Display Class
 
@@ -307,9 +280,10 @@ class TkinterDisplay:
         self.root.update()
 ```
 
-### Joystick Events Simulation
+### SenseHat Events Simulation
 
-Use Tkinter buttons to simulate joystick events, such as "enter" and "exit" for the parking lot.
+Use Tkinter buttons and text boxes to simulate sensor events, such as "enter" and "exit" for the parking lot.
+Text input is provided for temperature and license plates.
 
 ```python
 
