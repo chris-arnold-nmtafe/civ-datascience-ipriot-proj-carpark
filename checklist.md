@@ -16,23 +16,23 @@
 |                          | Parses MQTT messages from car park                                                                                        | [x ]      |
 | Configuration File       | **CarPark Class:**                                                                                                     |          |
 | Management               | Reads initial configuration from a file                                                                                | [x ]      |
-|                          | Writes available bays to a configuration class                                                                         | [ ]      |
+|                          | Writes available bays to a configuration class                                                                         | [x ]      |
 |                          | **Sensor Class:**                                                                                                      |          |
 |                          | Reads initial configuration from a file                                                                                | [x ]      |
 |                          | **Display Class:**                                                                                                     |          |
 |                          | Reads initial configuration from a file                                                                                | [x ]      |
 | Testing Requirements     | At least one test case for CarPark Class                                                                               | [x ]      |
-|                          | At least one test case for Sensor or Display Class                                                                     | [ ]      |
-| Additional Requirements  | Invent your own protocol for transmitting information; JSON is recommended                                             | [ ]      |
-| Git Requirements         | Forked the original project repository                                                                                 | [ ]      |
-|                          | At least 3 local commits and 3 remote commits with reasonable messages                                                  | [ ]      |
+|                          | At least one test case for Sensor or Display Class                                                                     | [ x]      |
+| Additional Requirements  | Invent your own protocol for transmitting information; JSON is recommended                                             | [x ]      |
+| Git Requirements         | Forked the original project repository                                                                                 | [x ]      |
+|                          | At least 3 local commits and 3 remote commits with reasonable messages                                                  | [x ]      |
 |                          | Worked in a feature branch and merged the feature branch                                                               | [ ]      |
 |                          | Both origin and local copy are synchronized at time of submission                                                      | [ ]      |
 | Submission Guidelines    | Code files organized in coherent folder structure                                                                      | [ ]      |
 |                          | Unit tests are submitted alongside the main code                                                                       | [ ]      |
 |                          | Configuration files used for testing are included in the submission                                                    | [ ]      |
 |                          | Submitted a zip file containing your code (excluding `venv/`, but including `.git/`)                                   | [ ]      |
-|                          | Ensure your lecturer has access to your GitHub repository                                                              | [ ]      |
+|                          | Ensure your lecturer has access to your GitHub repository                                                              | [x ]      |
 |                          | Completed the project journal                                                                                          | [ ]      |
 
 Please use this updated table as a comprehensive guide for the project requirements. Ensure each task is completed and checked off before submitting your project for assessment.
