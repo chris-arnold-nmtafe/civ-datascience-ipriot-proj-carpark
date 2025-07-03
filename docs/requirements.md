@@ -27,7 +27,6 @@ As a parking lot manager, I want to track cars entering and leaving the parking 
 ## Technical Backlog Items
 
 1. Develop a Python application to count cars entering and exiting the parking lot using SenseHat sensors.
-2. Implement an MQTT broker to publish the parking lot updates, temperature, and time.
 3. Develop a Python application to display parking availability, temperature, and time on a suitable display.
 4. Ensure proper data handling and error prevention (e.g., no negative parking spots).
 5. Update the configuration file format to use TOML with the required attributes.
@@ -35,19 +34,17 @@ As a parking lot manager, I want to track cars entering and leaving the parking 
 ## Definition of Done
 
 1. Cars entering and exiting the parking lot are accurately tracked, and a running total of available spots is maintained.
-2. Parking availability updates, temperature, and time are published via MQTT.
 3. Parking availability, temperature, and time are displayed in a user-friendly format on a suitable display.
-4. The system is tested and runs seamlessly on a Raspberry Pi with the SenseHat.
+4. The system is tested and runs seamlessly. A Raspberry Pi with SenseHat may be used to generate signals instead of the provided user interface.
 5. The code is well-documented, object-oriented, and follows best practices.
-6. The configuration file is in TOML format and contains the required attributes.
+6. A system test (using the python unittest module) is executed with the provided scenario data. 
 
 ## Functional Requirements Summary
 
 1. The system must count cars entering and exiting the parking lot.
 2. The system must maintain a running total of available parking spots.
-3. The system must publish parking availability updates, temperature, and time via MQTT.
+3. The system must log its activity to a file as events arise.
 4. The system must display parking availability, temperature, and time on a suitable display.
-5. The system must use a TOML configuration file with the required attributes.
 
 ## Non-Functional Requirements Summary
 
@@ -56,15 +53,3 @@ As a parking lot manager, I want to track cars entering and leaving the parking 
 3. The system must display the parking availability updates in real-time.
 4. The system must provide a user-friendly interface for drivers.
 5. The system must handle edge cases, such as full parking lots and more cars than available spots.
-6. The system must be compatible with the City of Moondalup's TOML-based software management practices.
-
-## Updated Configuration File Example (TOML format)
-
-```toml
-
-[config]
-location = "Moondalup City Square Parking"
-total_spaces = 192
-broker_host = "localhost"
-broker_port = 1883
-```
