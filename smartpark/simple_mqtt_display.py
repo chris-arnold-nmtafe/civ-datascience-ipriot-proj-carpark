@@ -1,5 +1,6 @@
-from smartpark.mqtt_device import MqttDevice
+from mqtt_device import MqttDevice
 import time
+
 class Display(MqttDevice):
     """Displays the number of cars and the temperature"""
     def __init__(self, config):

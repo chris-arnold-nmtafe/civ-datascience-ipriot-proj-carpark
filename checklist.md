@@ -4,10 +4,10 @@
 |                          | Code is documented with comments                                                                                       | [x ]      |
 |                          | Unit tests are created                                                                                                 | [x ]      |
 | MQTT Configuration       | **CarPark Class:**                                                                                                     |          |
-|                          | Subscribes to MQTT topics                                                                                              | x[ ]      |
+|                          | Subscribes to MQTT topics                                                                                              | [x ]      |
 |                          | Publishes MQTT messages                                                                                                | [x ]      |
 |                          | Can parse messages from sensor                                                                          | [x ]      |
-|                          | Sends MQTT message that includes available bays, temperature                                                                         | x[ ]      |
+|                          | Sends MQTT message that includes available bays, temperature                                                                         | [x ]      |
 |                          | **Sensor Class:**                                                                                                      |          |
 |                          | Publishes MQTT messages                                                                                                | [x ]      |
 |                          | Sends MQTT messages that include temperature, time, and entry/exit                                                                                        | [x ]      |
@@ -26,12 +26,12 @@
 | Additional Requirements  | Invent your own protocol for transmitting information; JSON is recommended                                             | [x ]      |
 | Git Requirements         | Forked the original project repository                                                                                 | [x ]      |
 |                          | At least 3 local commits and 3 remote commits with reasonable messages                                                  | [x ]      |
-|                          | Worked in a feature branch and merged the feature branch                                                               | [ ]      |
-|                          | Both origin and local copy are synchronized at time of submission                                                      | [ ]      |
-| Submission Guidelines    | Code files organized in coherent folder structure                                                                      | [ ]      |
-|                          | Unit tests are submitted alongside the main code                                                                       | [ ]      |
-|                          | Configuration files used for testing are included in the submission                                                    | [ ]      |
-|                          | Submitted a zip file containing your code (excluding `venv/`, but including `.git/`)                                   | [ ]      |
+|                          | Worked in a feature branch and merged the feature branch                                                               | [x ]      |
+|                          | Both origin and local copy are synchronized at time of submission                                                      | [x ]      |
+| Submission Guidelines    | Code files organized in coherent folder structure                                                                      | [x ]      |
+|                          | Unit tests are submitted alongside the main code                                                                       | [x ]      |
+|                          | Configuration files used for testing are included in the submission                                                    | [x ]      |
+|                          | Submitted a zip file containing your code (excluding `venv/`, but including `.git/`)                                   | [x ]      |
 |                          | Ensure your lecturer has access to your GitHub repository                                                              | [x ]      |
 |                          | Completed the project journal                                                                                          | [ ]      |
 
