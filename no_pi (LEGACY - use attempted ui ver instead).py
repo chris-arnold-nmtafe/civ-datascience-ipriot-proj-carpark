@@ -3,14 +3,18 @@ If you have a Raspberry Pi, or a SenseHAT emulator under Debian, you do not need
 
 You need to split the classes here into two files, one for the CarParkDisplay and one for the CarDetector.
 Attend to the TODOs in each class to complete the implementation."""
+import parkinglot
 from interfaces import CarparkSensorListener
 from interfaces import CarparkDataProvider
 import threading
 import time
 import tkinter as tk
 from typing import Iterable
+import tomli
 #TODO: replace this module with yours
-import mocks
+from parkinglot import ParkingLot
+
+
 
 # ------------------------------------------------------------------------------------#
 # You don't need to understand how to implement this class.                           #
@@ -75,60 +79,106 @@ class WindowedDisplay:
 class CarParkDisplay:
     """Provides a simple display of the car park status. This is a skeleton only. The class is designed to be customizable without requiring and understanding of tkinter or threading."""
     # determines what fields appear in the UI
-    fields = ['Available bays', 'Temperature', 'At']
+    fields = ["Location", 'Available bays', 'Temperature', 'Current Time']
 
-    def __init__(self,root):
+    def __init__(self,root, parking_lot, config):
+        # creating an instance variable of config to handle easier
+        self.config = config
+
+        # creating a threading event for updating
+        self._update_event = threading.Event()
+
+        # this bit initializes the window for display
         self.window = WindowedDisplay(root,
             'Moondalup', CarParkDisplay.fields)
+
+        # this part starts the background part for checking for updates
         updater = threading.Thread(target=self.check_updates)
         updater.daemon = True
         updater.start()
+
+
         self.window.show()
-        self._provider=None
-    
+
+        self._provider= parking_lot
+        self.parking_lot = parking_lot
+
+
     @property
     def data_provider(self):
         return self._provider
     @data_provider.setter
     def data_provider(self,provider):
-        if isinstance(provider,CarparkDataProvider):
+        if isinstance(provider,ParkingLot):
             self._provider=provider
 
     def update_display(self):
         field_values = dict(zip(CarParkDisplay.fields, [
-            f'{self._provider.available_spaces:03d}',
-            f'{self._provider.temperature:02d}℃',
-            time.strftime("%H:%M:%S",self._provider.current_time)
+            f"Location:{self.config['location']} | Capacity: {self.config['total_spaces']}",
+            f'{self._provider.available_spaces:}',
+            f'{self._provider.temperature:.1f}℃',
+            self._provider.time.strftime("%H:%M")
         ]))
         self.window.update(field_values)
 
+    # this was painful but parkinglot.py should notify an update should happen and then no_pi should run the update
     def check_updates(self):
         while True:
-            # TODO: This timer is pretty janky! Can you provide some kind of signal from your code
-            # to update the display?
-            time.sleep(1)
-            # When you get an update, refresh the display.
-            if self._provider is not None:
-                self.update_display()
+
+
+            # blocking events until triggered
+            self._update_event.wait()
+
+            # updates display
+            self.update_display()
+
+            # clears event to wait for next update
+            self._update_event.clear()
+
+
+
+    def trigger_update(self):
+        # manually setting events to trigger
+        self._update_event.set()
+
+
+    # making a dinky little definition to simulate time passing
+    def time_ticker(self):
+        # loading the time passing function
+        self._provider.time_passing()
+
+        # calls for update
+        self.trigger_update()
+
+        # scheduling a minute per 3 seconds real-time should be good - THIS IS THE NEXT TICK SO IT GOES **AFTER** THE UPDATE
+        self.window.window.after(3000, self.time_ticker)
 
 
 class CarDetectorWindow:
     """Provides a couple of simple buttons that can be used to represent a sensor detecting a car. This is a skeleton only."""
 
-    def __init__(self,root):
+    def __init__(self, root, parking_lot):
         self.root=root
         self.root.title("Car Detector ULTRA")
 
+        # new instance of parkinglot to handle cars entering and exiting
+        self.parking_lot = parking_lot
+
+
         self.btn_incoming_car = tk.Button(
-            self.root, text='🚘 Incoming Car', font=('Arial', 50), cursor='right_side', command=self.incoming_car)
+            self.root, text='🚘 Car Entering', font=('Arial', 50), cursor='right_side', command=self.parking_lot.enter, bg="green", fg="white")
         self.btn_incoming_car.grid(padx=10, pady=5,row=0,columnspan=2)
+
         self.btn_outgoing_car = tk.Button(
-            self.root, text='Outgoing Car 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.outgoing_car)
+            self.root, text='Car Exiting 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.parking_lot.exit, bg="red", fg="white")
         self.btn_outgoing_car.grid(padx=10, pady=5,row=1,columnspan=2)
         self.listeners=list()
+
         self.temp_label=tk.Label(
             self.root, text="Temperature", font=('Arial', 20)
         )
+
+        """ disabling this in place of buttons
         self.temp_label.grid(padx=10, pady=5,column=0,row=2)
         self.temp_var=tk.StringVar()
         self.temp_var.trace_add("write",lambda x,y,v: self.temperature_changed(float(self.temp_var.get())))
@@ -136,7 +186,27 @@ class CarDetectorWindow:
             self.root,font=('Arial', 20),textvariable=self.temp_var
         )
         self.temp_box.grid(padx=10, pady=5,column=1,row=2)
+        """
 
+        # blue decrease temperature button
+        self.temp_down = tk.Button(
+            self.root,
+            text = "-0.1°C",
+            font = ("Arial", 20),
+            fg = "blue",
+            command=lambda: self.adjust_temperature(-0.1)
+        )
+        self.temp_down.grid(padx=10, pady=5, column=0, row=4)
+
+        # red increase temperature button
+        self.temp_up = tk.Button(
+            self.root,
+            text = "+0.1°C",
+            font = ("Arial", 20),
+            fg = "red",
+            command=lambda: self.adjust_temperature(+0.1)
+        )
+        self.temp_up.grid(padx=10, pady=5, column=1, row=4)
         self.plate_label=tk.Label(
             self.root, text="License Plate", font=('Arial', 20)
         )
@@ -146,7 +216,7 @@ class CarDetectorWindow:
             self.root,font=('Arial', 20),textvariable=self.plate_var
         )
         self.plate_box.grid(padx=10, pady=5,column=1,row=3)
-    
+
     @property
     def current_license(self):
         return self.plate_var.get()
@@ -170,18 +240,53 @@ class CarDetectorWindow:
             listener.temperature_reading(temp)
 
 
+    # fandangling this took way too long
+    def adjust_temperature(self, delta):
+        # get temperature from parking lot
+        current_temp = self.parking_lot.temperature
+
+
+        # sets new temperature based on deltas from buttons
+        new_temp = round(current_temp + delta, 1)
+
+        # notify the gui window to display the temperature change
+        self.parking_lot.update_temperature(new_temp)
+
+
 if __name__ == '__main__':
     root = tk.Tk()
 
-    #TODO: This is my dodgy mockup. Replace it with a good one!
-    mock=mocks.MockCarparkManager()
+    # read config file
+    with open("config.txt", "r") as file:
+        config_string = file.read()
 
-    display=CarParkDisplay(root)
-    #TODO: Set the display to use your data source
-    display.data_provider=mock
+    # parse the configuration
+    config = tomli.loads(config_string)
 
-    detector=CarDetectorWindow(root)
-    #TODO: Attach your event listener
-    detector.add_listener(mock)
+    # creating parkinglot instance
+    parking_lot_instance = ParkingLot(config, display=None)
+
+
+    # initializing CarParkDisplay
+    display=CarParkDisplay(root, parking_lot_instance, config)
+
+    """
+  pain and suffering, i forgot to update parkinglot.display
+  this took me too long to realise
+     """
+    # setting carpark display
+    parking_lot_instance.display = display
+
+
+    display.data_provider=parking_lot_instance
+
+    # running the ticker to simulate time passing
+    display.time_ticker()
+
+    # initializing CarDetectorWindow
+    detector=CarDetectorWindow(root, parking_lot_instance)
+    detector.add_listener(parking_lot_instance)
+
+
 
     root.mainloop()
