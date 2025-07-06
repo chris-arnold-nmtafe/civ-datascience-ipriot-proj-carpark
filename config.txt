@@ -1,0 +1,4 @@
+total_spaces = 65
+temperature = 27.0
+location = "Frog Street Parking Lot" # shorter than 30 characters ideally
+time = "18:30"
