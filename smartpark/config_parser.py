@@ -30,10 +30,26 @@ Finally, you can use `yaml` if you prefer.
 
 
 """
+# smartpark/config_parser.py
+import tomli  # Python 3.11未満では tomli が必要（pip install tomli）
 
+def parse_config(filepath: str) -> dict:
+    """TOMLファイルを読み込んで辞書として返す"""
+    with open(filepath, "rb") as file:
+        config = tomli.load(file)
 
-
-def parse_config(config: dict) -> dict:
-    """Parse the config file and return the values as a dictionary"""
-    # TODO: get the configuration from a parsed file
-    return {'location': 'TBD', 'total_spaces': 0, 'broker_host': 'TBD', 'broker_port': 0}
+    # 必要な値を取得（[parking_lot] セクション前提）
+    if "parking_lot" in config:
+        parking = config["parking_lot"]
+        return {
+            "name": "raf-park",  # 名前は固定でもOK
+            "location": parking["location"],
+            "total-spaces": parking["total_spaces"],
+            "total-cars": 0,
+            "broker": parking["broker_host"],
+            "port": parking["broker_port"],
+            "topic-root": "lot",
+            "topic-qualifier": "entry"
+        }
+    else:
+        raise ValueError("Missing [parking_lot] section in config.")

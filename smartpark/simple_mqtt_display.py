@@ -1,6 +1,7 @@
-import mqtt_device
+from mqtt_device import MqttDevice
 import time
-class Display(mqtt_device.MqttDevice):
+
+class Display(MqttDevice):
     """Displays the number of cars and the temperature"""
     def __init__(self, config):
         super().__init__(config)
