@@ -16,7 +16,7 @@ class Car:
     def exit(self):
         self.exit_time = datetime.now()
 
-Carpark class
+#Carpark class
 class Carpark:
     def __init__(self, total_spaces):
         self.total_spaces = total_spaces
@@ -34,6 +34,7 @@ class Carpark:
         if len(self.cars) < self.total_spaces:
             self.cars.append(car)
             print(f"✅ {car.license_plate} entered at {car.entry_time.strftime('%H:%M:%S')}")
+            self.log_event(f"Car entered: {car.license_plate}| Temp: {self.temperature}°C")
         else:
             print(" Carpark is full!")
 
@@ -43,6 +44,7 @@ class Carpark:
                 car.exit()
                 self.cars.remove(car)
                 print(f"🚗 {car.license_plate} exited at {car.exit_time.strftime('%H:%M:%S')}")
+                self.log_event(f"Car exited: {car.license_plate}| Temp: {self.temperature}°C")
                 return
         print(" Car not found!")
 
@@ -54,6 +56,11 @@ class Carpark:
         print(f"Available Spaces: {self.available_spaces()} / {self.total_spaces}")
         print(f"Current Temperature: {self.temperature:.1f} °C")
         print(f"Time: {datetime.now().strftime('%H:%M:%S')}\n")
+
+    def log_event(self, message):
+        with open("log.txt", "a") as log_file:
+            time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            log_file.write(f"[{time_str}]{message}\n")
 
 #Entry / Exit Sensor 
 def simulate():
