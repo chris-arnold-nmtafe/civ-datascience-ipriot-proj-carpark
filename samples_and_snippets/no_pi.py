@@ -11,6 +11,7 @@ import tkinter as tk
 from typing import Iterable
 #TODO: replace this module with yours
 import mocks
+import csv
 
 # ------------------------------------------------------------------------------------#
 # You don't need to understand how to implement this class.                           #
@@ -66,8 +67,99 @@ class WindowedDisplay:
                 field_value = field.replace('field', 'value')
                 self.gui_elements[field_value].configure(
                     text=updated_values[self.gui_elements[field].cget('text').rstrip(self.SEP)])
-        self.window.update()
+        self.window.update()       
+        ...
+        #manager = CarparkManager(num_bays=10, weather_file='weather.csv')
+       
+        
+        class Car:
+            def __init__(self, license_plate, model, entry_time=None):
+                self.license_plate = license_plate
+                self.model = model
+                self.entry_time = entry_time or time.strftime("%Y-%m-%d %H:%M:%S")
+                self.exit_time = None
+        
+        class BayStatusTracker:
+            def __init__(self, num_bays):
+                self.bays = [False] * num_bays
+        
+            def occupy_bay(self):
+                for i, occupied in enumerate(self.bays):
+                    if not occupied:
+                        self.bays[i] = True
+                        return i
+                return None
+        
+            def free_bay(self):
+                for i, occupied in enumerate(self.bays):
+                    if occupied:
+                        self.bays[i] = False
+                        return i
+                return None
+        
+            def available_bays(self):
+                return self.bays.count(False)
+        
+        class CarparkManager:
+            def __init__(self, num_bays=10, weather_file='weather.csv'):
+                self.tracker = BayStatusTracker(num_bays)
+                self.cars = {}  # license_plate: Car
+                self.log = []
+                self.temperature = self.read_temperature(weather_file)
+                self.current_time = time.localtime()
+        
+            def read_temperature(self, weather_file):
+                try:
+                    with open(weather_file, newline='') as csvfile:
+                        reader = csv.DictReader(csvfile)
+                        for row in reader:
+                            return float(row['temperature'])
+                except Exception:
+                    return 22.0  # fallback
+        
+            @property
+            def available_spaces(self):
+                return self.tracker.available_bays()
+        
+            def incoming_car(self, license_plate):
+                model = "Unknown"  # You can extend to get model from UI
+                car = Car(license_plate, model)
+                self.cars[license_plate] = car
+                self.tracker.occupy_bay()
+                car.entry_time = time.strftime("%Y-%m-%d %H:%M:%S")
+                self.log.append((license_plate, "IN", car.entry_time))
+                print(f"LOG: {license_plate} entered at {car.entry_time}")
+        
+            def outgoing_car(self, license_plate):
+                car = self.cars.get(license_plate)
+                if car:
+                    car.exit_time = time.strftime("%Y-%m-%d %H:%M:%S")
+                    self.tracker.free_bay()
+                    self.log.append((license_plate, "OUT", car.exit_time))
+                    print(f"LOG: {license_plate} exited at {car.exit_time}")
+        
+            def temperature_reading(self, temp):
+                self.temperature = temp
+        
+        # Use CarparkManager in your main file instead of mocks.MockCarparkManager
+class BayStatusTracker:
+    """Tracks the status of each parking bay (occupied or available)."""
+    def __init__(self, num_bays: int):
+        self.bays = [False] * num_bays  # False = available, True = occupied
 
+    def occupy_bay(self, bay_index: int):
+        if 0 <= bay_index < len(self.bays):
+            self.bays[bay_index] = True
+
+    def free_bay(self, bay_index: int):
+        if 0 <= bay_index < len(self.bays):
+            self.bays[bay_index] = False
+
+    def available_bays(self) -> int:
+        return self.bays.count(False)
+
+    def occupied_bays(self) -> int:
+        return self.bays.count(True)
 # -----------------------------------------#
 # TODO: STUDENT IMPLEMENTATION STARTS HERE #
 # -----------------------------------------#
@@ -97,8 +189,8 @@ class CarParkDisplay:
     def update_display(self):
         field_values = dict(zip(CarParkDisplay.fields, [
             f'{self._provider.available_spaces:03d}',
-            f'{self._provider.temperature:02d}℃',
-            time.strftime("%H:%M:%S",self._provider.current_time)
+            f'{self._provider.temperature:04.1f}℃',
+            time.strftime("%H:%M:%S", self._provider.current_time)
         ]))
         self.window.update(field_values)
 
@@ -115,73 +207,92 @@ class CarParkDisplay:
 class CarDetectorWindow:
     """Provides a couple of simple buttons that can be used to represent a sensor detecting a car. This is a skeleton only."""
 
-    def __init__(self,root):
-        self.root=root
+    def __init__(self, root):
+        self.root = root
         self.root.title("Car Detector ULTRA")
 
         self.btn_incoming_car = tk.Button(
-            self.root, text='🚘 Incoming Car', font=('Arial', 50), cursor='right_side', command=self.incoming_car)
-        self.btn_incoming_car.grid(padx=10, pady=5,row=0,columnspan=2)
+            self.root, text='🚘 Incoming Car', font=('Arial', 50),
+            cursor='right_side', command=self.incoming_car
+        )
+        self.btn_incoming_car.grid(padx=10, pady=5, row=0, columnspan=2)
+
         self.btn_outgoing_car = tk.Button(
-            self.root, text='Outgoing Car 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.outgoing_car)
-        self.btn_outgoing_car.grid(padx=10, pady=5,row=1,columnspan=2)
-        self.listeners=list()
-        self.temp_label=tk.Label(
+            self.root, text='Outgoing Car 🚘', font=('Arial', 50),
+            cursor='bottom_left_corner', command=self.outgoing_car
+        )
+        self.btn_outgoing_car.grid(padx=10, pady=5, row=1, columnspan=2)
+
+        self.listeners = list()
+
+        self.temp_label = tk.Label(
             self.root, text="Temperature", font=('Arial', 20)
         )
-        self.temp_label.grid(padx=10, pady=5,column=0,row=2)
-        self.temp_var=tk.StringVar()
-        self.temp_var.trace_add("write",lambda x,y,v: self.temperature_changed(float(self.temp_var.get())))
-        self.temp_box=tk.Entry(
-            self.root,font=('Arial', 20),textvariable=self.temp_var
-        )
-        self.temp_box.grid(padx=10, pady=5,column=1,row=2)
+        self.temp_label.grid(padx=10, pady=5, column=0, row=2)
 
-        self.plate_label=tk.Label(
+        self.temp_var = tk.StringVar()
+        self.temp_var.trace_add(
+            "write",
+            lambda *args: self.temperature_changed(self.safe_float(self.temp_var.get()))
+        )
+        self.temp_box = tk.Entry(
+            self.root, font=('Arial', 20), textvariable=self.temp_var
+        )
+        self.temp_box.grid(padx=10, pady=5, column=1, row=2)
+
+        self.plate_label = tk.Label(
             self.root, text="License Plate", font=('Arial', 20)
         )
-        self.plate_label.grid(padx=10, pady=5,column=0,row=3)
-        self.plate_var=tk.StringVar()
-        self.plate_box=tk.Entry(
-            self.root,font=('Arial', 20),textvariable=self.plate_var
+        self.plate_label.grid(padx=10, pady=5, column=0, row=3)
+
+        self.plate_var = tk.StringVar()
+        self.plate_box = tk.Entry(
+            self.root, font=('Arial', 20), textvariable=self.plate_var
         )
-        self.plate_box.grid(padx=10, pady=5,column=1,row=3)
-    
+        self.plate_box.grid(padx=10, pady=5, column=1, row=3)
+
+        self.display = None  # Will be set externally
+
+    @staticmethod
+    def safe_float(value):
+        try:
+            return float(value)
+        except ValueError:
+            return 0.0
+
     @property
     def current_license(self):
         return self.plate_var.get()
 
-    def add_listener(self,listener):
-        if isinstance(listener,CarparkSensorListener):
+    def add_listener(self, listener):
+        if isinstance(listener, CarparkSensorListener):
             self.listeners.append(listener)
 
     def incoming_car(self):
-#        print("Car goes in")
         for listener in self.listeners:
             listener.incoming_car(self.current_license)
 
     def outgoing_car(self):
-#        print("Car goes out")
         for listener in self.listeners:
             listener.outgoing_car(self.current_license)
 
-    def temperature_changed(self,temp):
+    def temperature_changed(self, temp):
         for listener in self.listeners:
             listener.temperature_reading(temp)
+        # Update display immediately if available
+        if self.display is not None:
+            self.display.update_display()
 
 
 if __name__ == '__main__':
     root = tk.Tk()
 
-    #TODO: This is my dodgy mockup. Replace it with a good one!
-    mock=mocks.MockCarparkManager()
+    mock = mocks.MockCarparkManager()
+    display = CarParkDisplay(root)
+    display.data_provider = mock
 
-    display=CarParkDisplay(root)
-    #TODO: Set the display to use your data source
-    display.data_provider=mock
-
-    detector=CarDetectorWindow(root)
-    #TODO: Attach your event listener
+    detector = CarDetectorWindow(root)
     detector.add_listener(mock)
+    detector.display = display  # Allow detector to update display
 
     root.mainloop()
