@@ -1,6 +1,8 @@
 """A class or function to parse the config file and return the values as a dictionary.
 
-The config file itself can be any of the following formats:
+The config file itself can be any of the following formats (recommend one of pandas, json, or ryo):
+
+- You can use pandas to read a data file if you like. Something simple like a CSV would be best.
 
 - ryo: means 'roll your own' and is a simple text file with key-value pairs separated by an equals sign. For example:
 ```
@@ -33,7 +35,7 @@ Finally, you can use `yaml` if you prefer.
 
 
 
-def parse_config(config: dict) -> dict:
+def parse_config(config_file: str) -> dict:
     """Parse the config file and return the values as a dictionary"""
     # TODO: get the configuration from a parsed file
-    return {'location': 'TBD', 'total_spaces': 0, 'broker_host': 'TBD', 'broker_port': 0}
+    return {'location': 'TBD', 'total_spaces': 0, 'log_file':'carpark_log.txt' }

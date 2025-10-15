@@ -4,7 +4,7 @@ A simulated workplace environment where students must demonstrate OO skills by i
 
 ## Scenario
 
-You are working as a junior software innovation engineer for the City of Moondalup in the Department of Transport. The department wants to upgrade a few public parking spaces by providing information about the number of available parking spots in near real time for each one. The parking lots in question do not have boom gates.
+You are working as a junior software innovation engineer for the City of Moondalup in the Department of Transport. The department wants to upgrade a few public carparks by providing information about the number of available parking spots in near real time.
 
 ## Resources
 

@@ -28,12 +28,12 @@ class CarparkSensorListener(abc.ABC):
 
 class CarparkDataProvider(abc.ABC):
     '''
-    This abstract class provides is the display with its data.
+    This abstract class provides the display with its data.
     You should implement this class and provide your app's data
     through the properties here.
 
     Important! note about properties: they are methods but you use them like
-    attributes. For example, if I make x a new CarparkDataProvider(),
+    attributes. For example, if I make "x" a new CarparkDataProvider(),
     I can see the available spaces by referencing x.available_spaces.
     You might usually expect x.available_spaces() to be the way you'd
     access the data, but that won't work!

@@ -8,7 +8,7 @@ To provide a modern, real-time parking space availability system for the City of
 
 ## Background
 
-The city is looking to create a proof-of-concept (POC) to digitize their existing parking resources. The project is a low budget project to add sensors to **uncontrolled** parking lots (ones without a gate) in order to provide drivers and city administrators with live information about parking availability.
+The city is looking to create a proof-of-concept (POC) to digitise their existing parking resources. The project is a low budget project to add sensors to parking lots in order to provide drivers and city administrators with live information about parking availability. The sensors will record information about cars entering and leaving the carpark, as well as temperature information.
 
 ## User Stories
 
@@ -29,7 +29,7 @@ As a parking lot manager, I want to track cars entering and leaving the parking 
 1. Develop a Python application to count cars entering and exiting the parking lot using SenseHat sensors.
 3. Develop a Python application to display parking availability, temperature, and time on a suitable display.
 4. Ensure proper data handling and error prevention (e.g., no negative parking spots).
-5. Update the configuration file format to use TOML with the required attributes.
+5. Read a configuration file in the format of your choice. The number of parking spots should be configurable.
 
 ## Definition of Done
 
@@ -37,7 +37,6 @@ As a parking lot manager, I want to track cars entering and leaving the parking 
 3. Parking availability, temperature, and time are displayed in a user-friendly format on a suitable display.
 4. The system is tested and runs seamlessly. A Raspberry Pi with SenseHat may be used to generate signals instead of the provided user interface.
 5. The code is well-documented, object-oriented, and follows best practices.
-6. A system test (using the python unittest module) is executed with the provided scenario data. 
 
 ## Functional Requirements Summary
 
@@ -48,7 +47,7 @@ As a parking lot manager, I want to track cars entering and leaving the parking 
 
 ## Non-Functional Requirements Summary
 
-1. The system must be written in Python and run on a Raspberry Pi with the SenseHat.
+1. The system must be written in Python.
 2. The system must use an object-oriented programming approach.
 3. The system must display the parking availability updates in real-time.
 4. The system must provide a user-friendly interface for drivers.
