@@ -2,7 +2,7 @@
 |--------------------------|------------------------------------------------------------------------------------------------------------------------|----------|
 | General Requirements     | Code follows PEP 8 style guide                                                                                        | [ ]      |
 |                          | Code is documented with comments                                                                                       | [ ]      |
-| MQTT Configuration       | **CarPark Class:**                                                                                                     |          |
+| Configuration and data model    | **CarPark Class:**                                                                                                     |          |
 |                          | Can parse messages from sensor                                                                          | [ ]      |
 | Configuration File       | **CarPark Class:**                                                                                                     |          |
 | Management               | Reads initial configuration from a file                                                                                | [ ]      |

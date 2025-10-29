@@ -50,3 +50,7 @@ class MockCarparkManager(CarparkSensorListener,CarparkDataProvider):
 
     def temperature_reading(self,reading):
         print(f'temperature is {reading}')
+
+class Car:
+    def __init__(self,plate=None):
+        self.LicensePlate = plate
