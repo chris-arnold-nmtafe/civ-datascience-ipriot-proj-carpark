@@ -26,7 +26,7 @@ As a parking lot manager, I want to track cars entering and leaving the parking 
 
 ## Technical Backlog Items
 
-1. Develop a Python application to count cars entering and exiting the parking lot using SenseHat sensors.
+1. Develop a Python application to count cars entering and exiting the parking lot (we will be simulating the automatic sensors).
 3. Develop a Python application to display parking availability, temperature, and time on a suitable display.
 4. Ensure proper data handling and error prevention (e.g., no negative parking spots).
 5. Read a configuration file in the format of your choice. The number of parking spots should be configurable.
