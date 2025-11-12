@@ -1,9 +1,11 @@
 import unittest
 import json  # you can use toml, json,yaml, or ryo for your config file
 import sys,os
-cwd = os.path.dirname(__file__)
-sys.path.append(os.path.dirname(cwd))
-import smartpark.config_parser as pc
+from pathlib import Path
+cwd = Path(os.path.dirname(__file__))
+parent = str(cwd.parent)
+
+sys.path.append(parent + "/smartpark")
 
 
 class TestConfigParsing(unittest.TestCase):

@@ -28,7 +28,8 @@ class MockCarparkManager(CarparkSensorListener,CarparkDataProvider):
     CONFIG_FILE = "carpark_config.txt"
 
     def __init__(self):
-        configuration = parse_config(MockCarparkManager.CONFIG_FILE)
+#        configuration = parse_config(MockCarparkManager.CONFIG_FILE)
+        pass
 
     @property
     def available_spaces(self):
