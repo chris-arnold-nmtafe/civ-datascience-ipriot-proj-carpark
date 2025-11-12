@@ -37,5 +37,14 @@ Finally, you can use `yaml` if you prefer.
 
 def parse_config(config_file: str) -> dict:
     """Parse the config file and return the values as a dictionary"""
-    # TODO: get the configuration from a parsed file
-    return {'location': 'TBD', 'total_spaces': 0, 'log_file':'carpark_log.txt' }
+    import json
+    with open(config_file) as input_file:
+        config = json.load(input_file)
+    return config["CarParks"][0]
+#    return {'location': 'TBD', 'total_spaces': 0, 'log_file':'carpark_log.txt' }
+
+if __name__ == '__main__':
+    print({'location': 'TBD', 'total_spaces': 0, 'log_file':'carpark_log.txt' })
+    #print(parse_config("samples_and_snippets\\config.json"))
+    cfg_data=parse_config("samples_and_snippets\\config.json")
+    print(cfg_data)
