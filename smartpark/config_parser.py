@@ -41,10 +41,7 @@ def parse_config(config_file: str) -> dict:
     with open(config_file) as input_file:
         config = json.load(input_file)
     return config["CarParks"][0]
-#    return {'location': 'TBD', 'total_spaces': 0, 'log_file':'carpark_log.txt' }
 
 if __name__ == '__main__':
-    print({'location': 'TBD', 'total_spaces': 0, 'log_file':'carpark_log.txt' })
-    #print(parse_config("samples_and_snippets\\config.json"))
     cfg_data=parse_config("samples_and_snippets\\config.json")
     print(cfg_data)
